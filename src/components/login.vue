@@ -35,6 +35,7 @@
   </div>
 </template>
 <script>
+  //引入组件
 import gql from "graphql-tag";
 export default {
   data() {
