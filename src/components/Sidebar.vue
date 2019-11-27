@@ -47,7 +47,7 @@
                                 title: '简历管理'
                             },
                             {
-                                index: 'modifyPassword',
+                                index: 'dataManagement',
                                 title: '数据管理'
                             }
                         ]

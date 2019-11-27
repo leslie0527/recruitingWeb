@@ -14,6 +14,7 @@ import jobManagement from '@/components/jobManagement'
 import userResume from '@/components/userResume'
 import roleManagement from '@/components/roleManagement'
 import resResume from '@/components/resResume'
+import dataManagement from '@/components/dataManagement'
 
 Vue.use(Router)
 // console.log(sessionStorage.getItem("id"))
@@ -49,6 +50,10 @@ export default new Router({
         {
           path:'/userResume',
           component:userResume
+        },
+        {
+          path:'/dataManagement',
+          component:dataManagement
         }
       ]
     },
