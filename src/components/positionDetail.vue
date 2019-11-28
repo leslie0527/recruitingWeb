@@ -81,13 +81,11 @@ export default {
     getUrl(){
           this.cId = this.$route.query.cId;
       if(this.$route.query.id){
-        // console.log(1);
         this.id = this.$route.query.id;
         this.activeName = "last";
         this.postShow = true;
         this.getPostDetail();
       }
-      // console.log(this.cId);
       this.getDetail();
     },
     getPostDetail(){
@@ -113,13 +111,11 @@ export default {
           id:this.id
         }
       }).then(data=>{
-        console.log(data);
         this.postDetail=data.data.companyPosition.detail;
       })
       .catch(err=>{})
     },
     handleClick(tab, event) {
-      console.log(tab, event);
     },
     send(){
 
@@ -146,7 +142,6 @@ export default {
           id:postDetail.id
         }
       }).then(data=>{
-        console.log(data)
       // this.$router.push({path:"/positionDetail",query:{cId:this.cId,id:item.id}})
       this.$router.push({path:"/positionDetail",query:{cId:this.cId}})
       }).catch(err=>{console.log(err)})
@@ -194,7 +189,6 @@ export default {
           }
         })
         .then(data => {
-          console.log(data.data.company.detail)
           if(!data.data.company.detail){
             this.$router.push({path:"/comInfo"})
           }
