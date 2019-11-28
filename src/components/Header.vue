@@ -16,6 +16,11 @@
                 name: 'admin'
             }
         },
+        created(){
+            if(!sessionStorage.getItem("username")){
+                this.$router.push({path:"/"});
+            }
+        },
         computed:{
             username(){
                 let username = sessionStorage.getItem('username');

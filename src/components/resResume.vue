@@ -66,7 +66,7 @@ export default {
                   mutation:gql`
                     mutation(
                         $id:Int!
-                        $notice:Stri
+                        $notice:String
                     ){
                     interviewNotice{
                         update(

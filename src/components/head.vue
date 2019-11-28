@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="header">
+    <div class="header" v-if="!isAdmin">
       <router-link to="/index">
         <img src="../assets/logo.png" class="logo" />
       </router-link>
@@ -48,10 +48,19 @@ export default {
     return {
       searchContent: "",
       isFirm:false,
-      username:""
+      username:"",
+      isAdmin:false
     };
   },
   created(){
+    if(sessionStorage.getItem("role")=="学生"||sessionStorage.getItem("role")=="企业"){
+      this.isAdmin=false;
+    }else{
+      this.isAdmin=true;
+    }
+    if(!sessionStorage.getItem("username")){
+      this.$router.push({path:"/"});
+    }
     if(sessionStorage.getItem("cId")){
       this.getRuesume();
     }

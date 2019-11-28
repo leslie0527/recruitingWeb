@@ -55,6 +55,12 @@
                 ]
             }
         },
+        created(){
+            if(!sessionStorage.getItem("role")=="超级管理员"){
+                this.items.shift();
+            }
+            console.log(sessionStorage.getItem("role"))
+        },
         computed:{
             onRoutes(){
                 return this.$route.path.replace('/','');

@@ -95,7 +95,7 @@ import gql from "graphql-tag";
                                 message:"管理员登陆成功，即将跳转",
                                 type:"success"
                             })
-                            this.$router.push({path:"/adminManagement"})
+                            this.$router.push({path:"/roleManagement"})
                         }).catch(err=>{
                             console.log(err)
                         })                   

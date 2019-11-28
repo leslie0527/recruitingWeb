@@ -5,8 +5,8 @@
     </div>
 
     <div v-else>
-      <el-button type="primary" style="float:right" @click="updateResume">修改简历</el-button>
-      <el-button type="primary" style="float:right" @click="delResume">删除当前简历</el-button>
+      <el-button type="primary" style="float:right" @click="updateResume" v-if="isUser">修改简历</el-button>
+      <el-button type="primary" style="float:right" @click="delResume" v-if="isUser">删除当前简历</el-button>
       <div class="userIcon">
         <img :src="form.imgPath" />
       </div>
@@ -226,6 +226,7 @@ export default {
       formLabelWidth: "120px",
       dialogTitle: "简历修改",
       isResume: false,
+      isUser:false,
       form: {
         // imgPath:"",//头像
         // name:"",//姓名
@@ -304,6 +305,7 @@ export default {
       this.id = this.$route.query.id
     }else{
       this.id = sessionStorage.getItem("id")
+      this.isUser=true;
     }
     // console.log(this.id);
     this.getResume(); 
@@ -529,7 +531,8 @@ export default {
             this.$message({
             message:"简历创建成功",
             type:"success"
-          })
+          });
+          history.go(0);
           }).catch(err=>{
             console.log(err)
           })
