@@ -32,8 +32,10 @@
           </div>
         </el-tab-pane>
         <el-tab-pane label="职位描述" name="last" v-if="postShow">
-          <el-button type="primary" style="float:right" @click="delPost(postDetail)">删除职位</el-button>
-          <el-button type="primary" style="float:right" @click="upPost(postDetail)">修改职位</el-button>
+          <div v-if="butState">
+            <el-button type="primary" style="float:right" @click="delPost(postDetail)">删除职位</el-button>
+            <el-button type="primary" style="float:right" @click="upPost(postDetail)">修改职位</el-button>
+          </div>
           <h2>{{this.postDetail.title}}</h2>
           <p class="gray-color">职位详情</p>
           <p class="red-color">1.薪资:{{postDetail.wages}}元/月</p>
@@ -58,6 +60,7 @@ export default {
   data() {
     return {
       role:"",
+      butState:true,
       activeName: "first",
       id:"",
       cId: "",
@@ -76,6 +79,10 @@ export default {
   },
   created() {
     this.role = sessionStorage.getItem("role");
+    //判断是否从管理后台过来 是就隐藏按钮
+    if (this.cId = this.$route.query.state === 'bk') {
+      this.butState = false;
+    }
     this.getUrl();
   },
   methods: {
@@ -123,7 +130,7 @@ export default {
     },
     pushPost(item){
       console.log(this.cId);
-      this.$router.push({path:"/positionDetail",query:{cId:this.cId,id:item.id}})
+      this.$router.push({path:"/positionDetail",query:{cId:this.cId,id:item.id,state:this.$route.query.state}})
     },
     delPost(postDetail){
       console.log(this.cId);

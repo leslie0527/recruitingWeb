@@ -34,7 +34,7 @@
         width="180">
       </el-table-column>
       <el-table-column
-        prop="company.abbreviation"
+        prop="company.name"
         label="发布公司"
         width="180">
       </el-table-column>
@@ -72,7 +72,7 @@ export default {
         },
         detailBtn(cId,id){
             // console.log(id);
-            this.$router.push({path:"/positionDetail",query:{cId,id}})
+            this.$router.push({path:"/positionDetail",query:{cId,id,state:'bk'}})
         },
         getPositionList(){
         this.$apollo

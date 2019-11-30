@@ -125,8 +125,7 @@ export default {
           this.$router.push({path:"/index"});
         })
         .catch(err => {
-          console.log(err);
-          this.$message.error("账号或密码错误，请重新登陆");
+          this.$message.error("账号,密码错误 或已被冻结，请重新登陆");
         });
     },
     //注册

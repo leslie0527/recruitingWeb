@@ -43,10 +43,11 @@
                 <el-table-column
                     fixed="right"
                     label="操作"
-                    width="100">
+                    width="200">
                     <template slot-scope="scope">
-                        <!-- <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button> -->
                         <el-button type="text" @click="handleClick(scope.row)" size="small">角色分配</el-button>
+                        <el-button v-if="!scope.row.isFreeze" type="text" @click="freezeClick(scope.row)" size="small">冻结账号</el-button>
+                        <el-button v-if="scope.row.isFreeze" type="text" @click="freezeClick(scope.row)" size="small">解冻账号</el-button>
                     </template>
                     </el-table-column>
         </el-table>
@@ -75,7 +76,8 @@ export default {
             roleList:[],
             role:"",
             dialogFormVisible:false,
-            id:""
+            id:"",
+            freeze:false
         }
     },
     created(){
@@ -105,6 +107,8 @@ export default {
                                 sex
                                 arg
                                 role
+                                isDelete
+                                isFreeze
                             }
                         }
                     }
@@ -113,7 +117,6 @@ export default {
                     page:this.page
                 }
             }).then(data=>{
-                console.log(data.data.member.search)
                 this.roleList = data.data.member.search;
             })
             .catch(err=>{console.log(err)})
@@ -122,6 +125,39 @@ export default {
             this.dialogFormVisible=!this.dialogFormVisible
              this.role=item.role;
              this.id = item.id;
+        },
+        //冻结/解冻账户
+        freezeClick (obj) {
+            if (obj.isFreeze) {
+                this.freeze = false;
+            } else {
+                this.freeze = true;
+            }
+            this.$apollo.mutate({
+                mutation:gql`
+                    mutation($id:Int!,$isFreeze:Boolean){
+                        member{
+                            update(
+                                id:$id,
+                                isFreeze:$isFreeze
+                            ){
+                                id
+                            }
+                        }
+                    }
+                `,
+                variables:{
+                    id:obj.id,
+                    isFreeze:this.freeze
+                }
+            }).then(data=>{
+                this.$message({
+                    message:"操作成功",
+                    type:'success'
+                });
+                this.getRoleList();
+            })
+                .catch(err=>{console.log(err)})
         },
         updateRole(){
             this.dialogFormVisible = false;
@@ -143,7 +179,6 @@ export default {
                     role:this.role
                  }
              }).then(data=>{
-                 console.log(data)
                  this.$message({
                      message:"当前用户角色修改成功",
                      type:'success'
