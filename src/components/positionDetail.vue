@@ -143,7 +143,10 @@ export default {
           id:postDetail.id
         }
       }).then(data=>{
-      // this.$router.push({path:"/positionDetail",query:{cId:this.cId,id:item.id}})
+        this.$message({
+          message:"删除职位成功",
+          type:'success'
+        });
         this.postShow = false;
         this.activeName = "second";
       this.$router.push({path:"/positionDetail"})
@@ -151,7 +154,7 @@ export default {
     },
     //修改职位
     upPost (postDetail) {
-
+      this.$router.push({path:"/jobPost",query:{state:'update',id:postDetail.id}})
     },
     getDetail() {
       this.$apollo
