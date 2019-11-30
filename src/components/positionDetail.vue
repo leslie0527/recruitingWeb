@@ -121,11 +121,11 @@ export default {
 
     },
     pushPost(item){
-      console.log(item.id);
+      console.log(this.cId);
       this.$router.push({path:"/positionDetail",query:{cId:this.cId,id:item.id}})
     },
     delPost(postDetail){
-      console.log(postDetail.id);
+      console.log(this.cId);
       this.$apollo.mutate({
         mutation:gql`
         mutation($id:Int!){
