@@ -11,9 +11,9 @@
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="200">
         <template slot-scope="scope">
-          <el-button type="text" @click="updateBtn(scope)" size="small">编辑</el-button>
-          <el-button v-if="scope.row.username !== 'admin' && !scope.row.isDelete" type="text" @click="deleteBtn(scope)" size="small">删除</el-button>
-          <el-button v-if="scope.row.username !== 'admin' && scope.row.isDelete" type="text" @click="deleteBtn(scope)" size="small">恢复</el-button>
+          <el-button v-if="scope.row.username === adminName" type="text" @click="updateBtn(scope)" size="small">编辑</el-button>
+          <el-button v-if="scope.row.username !== 'admin' && !scope.row.isDelete && adminName === 'admin'" type="text" @click="deleteBtn(scope)" size="small">删除</el-button>
+          <el-button v-if="scope.row.username !== 'admin' && scope.row.isDelete && adminName === 'admin'" type="text" @click="deleteBtn(scope)" size="small">恢复</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -46,10 +46,12 @@ export default {
       adminList: [],
       dialogFormVisible: false,
       addForm: {},
+      adminName:'',
       dialogTitle: "新增普通管理员"
     };
   },
   created() {
+    this.adminName = sessionStorage.getItem("username");
     this.getAdminList();
   },
   methods: {
