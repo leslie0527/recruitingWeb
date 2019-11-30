@@ -244,7 +244,11 @@ export default {
                 isDelete:this.comp.isDelete
         }
       }).then(data=>{
-        console.log(data)
+        this.$message({
+          message:"公司信息修改成功",
+          type:'success'
+        });
+        this.getDetail();
       }).catch(err=>{
         console.log(err)
       })
@@ -307,8 +311,12 @@ export default {
                 memberId:sessionStorage.getItem("id")
         }
       }).then(data=>{
-        console.log(data.data.company.create.id);
+        this.$message({
+          message:"公司信息创建成功",
+          type:'success'
+        });
         sessionStorage.setItem('cId',data.data.company.create.id);
+        this.getDetail();
       }).catch(err=>{
         console.log(err)
       })

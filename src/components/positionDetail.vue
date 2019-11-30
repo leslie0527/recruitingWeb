@@ -32,7 +32,8 @@
           </div>
         </el-tab-pane>
         <el-tab-pane label="职位描述" name="last" v-if="postShow">
-          <el-button type="primary" style="float:right" @click="delPost(postDetail)">职位不合格</el-button>
+          <el-button type="primary" style="float:right" @click="delPost(postDetail)">删除职位</el-button>
+          <el-button type="primary" style="float:right" @click="upPost(postDetail)">修改职位</el-button>
           <h2>{{this.postDetail.title}}</h2>
           <p class="gray-color">职位详情</p>
           <p class="red-color">1.薪资:{{postDetail.wages}}元/月</p>
@@ -143,8 +144,14 @@ export default {
         }
       }).then(data=>{
       // this.$router.push({path:"/positionDetail",query:{cId:this.cId,id:item.id}})
-      this.$router.push({path:"/positionDetail",query:{cId:this.cId}})
+        this.postShow = false;
+        this.activeName = "second";
+      this.$router.push({path:"/positionDetail"})
       }).catch(err=>{console.log(err)})
+    },
+    //修改职位
+    upPost (postDetail) {
+
     },
     getDetail() {
       this.$apollo

@@ -177,7 +177,8 @@ export default {
             this.$message({
               message:"职位创建成功",
               type:'success'
-            })
+            });
+            this.form = {};//清空用户输入
             console.log(data)
           }).catch(err=>{
             console.log(err)

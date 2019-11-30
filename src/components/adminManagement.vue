@@ -12,6 +12,7 @@
       <el-table-column fixed="right" label="操作" width="100">
         <template slot-scope="scope">
           <el-button type="text" @click="updateBtn(scope)" size="small">编辑</el-button>
+          <el-button v-if="scope.row.username !== 'admin'" type="text" @click="deleteBtn(scope)" size="small">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -94,6 +95,32 @@ export default {
       this.addForm = scope.row;
       this.dialogTitle = "修改普通管理员";
       this.dialogFormVisible = !this.dialogFormVisible;
+    },
+    //删除管理员
+    deleteBtn(scope){
+      if (scope.row.username === 'admin') {
+        return;
+      }
+      this.$apollo
+              .mutate({
+                mutation: gql`
+            mutation($id: Int!) {
+              admin {
+                update(id: $id,isDelete:true) {
+                  isDelete
+                }
+              }
+            }
+          `,
+                variables: {
+                  id: scope.row.id
+                }
+              })
+              .then(data => {
+                console.log(data.data.admin.update);
+                this.getAdminList();
+              })
+              .catch(err => {});
     },
     createdAdmin() {
       if (this.dialogTitle == "修改普通管理员") {
