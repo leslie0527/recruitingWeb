@@ -8,6 +8,7 @@
       background-color="#d73937"
       text-color="#fff"
       active-text-color="#fff"
+      v-if="!isComp"
     >
       <el-submenu index="2">
         <template slot="title">热门职业</template>
@@ -17,7 +18,7 @@
       <!-- <el-menu-item index="1">行业</el-menu-item> -->
       <!--点击行业筛选职位-->
     </el-menu>
-    <div class="welfare">
+    <div class="welfare" v-if="!isComp">
       <div class="welfare-list">
         <span class="welfare-title">福利</span>
         <el-checkbox v-model="checked" @change="allList" style="margin:0 20px">不限</el-checkbox>
@@ -33,7 +34,7 @@
       </div>
     </div>
     <div class="line"></div>
-    <div class="welfare">
+    <div class="welfare" v-if="!isComp">
       <div class="welfare-list">
         <span class="welfare-title">职业</span>
         <!-- <el-checkbox v-model="checked" style="margin:0 20px">不限</el-checkbox>
@@ -49,7 +50,8 @@
         </div>
       </div>
     </div>
-    <div
+    <div v-if="!isComp">
+      <div
       style="margin-top:10px;box-shadow:5px 5px 10px #ccc"
       v-for="(item,index) in indexList"
       :key="index"
@@ -78,8 +80,20 @@
         <el-col :span="6" style="color:#333;">经验:{{item.workExp}}</el-col>
         <!-- <el-col :span="4"  style="color:#999;">昨天</el-col> -->
       </el-row>
-      <!-- <p><span>啥子几把科技公司</span><span>1-20|民营|移动互联网/电子商务</span></p>
-      <p><span>PHP工程师</span><span>￥10000-15000</span><span>渝北区</span><span>经验>=2年</span><span>昨天</span></p>-->
+    </div>
+    </div>
+    <div v-else style="margin-top:10px;box-shadow:5px 5px 10px #ccc">
+          <el-row  v-for="item in resumeList" :key="item.id" class="top">
+        <el-col :span="4">姓名:{{item.name}}</el-col>
+        <el-col :span="5">手机号码:{{item.mobile}}</el-col>
+        <el-col :span="3">性别:{{item.sex==10?"男":"女"}}</el-col>
+        <el-col :span="3">年龄:{{item.arg}}岁</el-col>
+        <el-col :span="3">工作经验:{{item.workExp}}</el-col>
+        <el-col :span="3">意向职位:{{item.position}}</el-col>
+        <el-col :span="3">
+          <el-button type="primary" @click="handleClick(item)">简历详情</el-button>
+        </el-col>
+      </el-row>
     </div>
     <div class="btn-flex">
       <el-button @click="prev" :disabled="disabled1">上一页</el-button>
@@ -102,9 +116,11 @@ export default {
       disabled1:false,
       disabled2:false,
       checked: true,
+      isComp:false,
       checkList: [],
       indexList: [],
       tradeOptions:[],
+      resumeList:[],
       radio: "1",
       search: "",
       page:1,
@@ -116,13 +132,21 @@ export default {
   },
   created() {
     this.role=sessionStorage.getItem("role");
-    // console.log(this.role);
-    this.searchList();
-    this.tradeOption();
+    if(this.role=="企业"){
+      this.searchResume();
+      this.isComp=true;
+    }else{
+        this.searchList();
+        this.tradeOption();
+    }
   },
   watch: {
     $route(to, from) {
-      this.searchList();
+      if(this.role=="企业"){
+        this.searchResume();
+      }else{
+        this.searchList();
+      }
     }
   },
   methods: {
@@ -130,6 +154,74 @@ export default {
       console.log(id);
       this.tId= id;
       this.searchList();
+    },
+    handleClick(item){
+      console.log(item);
+      this.$router.push({path:"/myResume",query:{id:item.memberId}})
+    },
+    searchResume(){
+      console.log(this.$route.query.searchResume)
+      if(this.$route.query.searchResume){
+      this.$apollo.mutate({
+        mutation:gql`
+          query($page:Int,$positionType:String){
+        memberResume{
+          search(
+            page:$page
+            positionType:$positionType
+          ){
+               id
+              name
+              mobile
+              sex
+              arg
+              workExp
+              position
+              memberId
+              }
+            }
+          }
+        `,
+        variables:{
+          page:this.page,
+          positionType:this.$route.query.searchResume
+        }
+      }).then(data=>{
+        this.resumeList = data.data.memberResume.search;
+        console.log(this.resumeList);
+      }).catch(err=>{
+        console.log(err);
+      })
+      }else{
+        this.$apollo.mutate({
+        mutation:gql`
+          query($page:Int){
+        memberResume{
+          search(
+            page:$page
+          ){
+               id
+              name
+              mobile
+              sex
+              arg
+              workExp
+              position
+              memberId
+              }
+            }
+          }
+        `,
+        variables:{
+          page:this.page
+        }
+      }).then(data=>{
+        this.resumeList = data.data.memberResume.search;
+        console.log(this.resumeList);
+      }).catch(err=>{
+        console.log(err);
+      })
+      }
     },
     tradeOption(){
       this.$apollo.mutate({
@@ -320,15 +412,28 @@ export default {
       }
       this.page--;
       this.disabled2 = false;
+      if(this.role=="企业"){
+        this.searchResume();
+      }else{
       this.searchList();
+      }
     },
     next(){
+      if(this.role=="企业"){
+        if(this.resumeList.length<10){
+          this.disabled2=true;
+        }
+        this.page++;
+        this.disabled1 =false;
+        this.searchResume();
+      }else{
       if(this.indexList.length<10){
         this.disabled2=true;
       }
       this.page++;
       this.disabled1 =false;
       this.searchList();
+      }
     }
   }
 };

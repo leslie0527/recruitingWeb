@@ -2,12 +2,18 @@
   <div>
     <div class="header" v-if="!isAdmin">
       <router-link to="/index">
-        <img src="../assets/logo.png" class="logo" />
+        <img src="../assets/logo.png" class="logo"/>
       </router-link>
-      <div class="search-input">
+      <div class="search-input" v-if="!isFirm">
         <el-input placeholder="找一找，总有适合你的工作" v-model="searchContent">
           <template slot="prepend">职位:</template>
           <el-button slot="append" icon="el-icon-search" @click="search"></el-button>
+        </el-input>
+      </div>
+      <div class="search-input" v-else>
+        <el-input placeholder="根据职位搜索简历" v-model="searchContent">
+          <template slot="prepend">职位:</template>
+          <el-button slot="append" icon="el-icon-search" @click="searchResume"></el-button>
         </el-input>
       </div>
       <div>
@@ -32,6 +38,7 @@
             <el-dropdown-item command="comInfo">编辑公司信息</el-dropdown-item>
             <el-dropdown-item command="jobPost">发布职位</el-dropdown-item>
             <el-dropdown-item command="resResume">收到的简历</el-dropdown-item>
+            <el-dropdown-item command="modifier">信息修改</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </div>
@@ -39,6 +46,34 @@
     <div class="child">
       <router-view></router-view>
     </div>
+    <el-dialog title="用户信息修改" :visible.sync="dialogVisible">
+      <el-form :model="userForm">
+        <el-form-item label="用户名" label-width="200">
+          <el-input :disabled="true" v-model="userForm.username" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="用户密码" label-width="200">
+          <el-input v-model="userForm.password" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="真实姓名" label-width="200">
+          <el-input v-model="userForm.name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="手机号" label-width="200">
+          <el-input v-model="userForm.mobile" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="年龄" label-width="200">
+          <el-input v-model="userForm.arg" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="性别" label-width="200">
+         <el-radio-group v-model="userForm.sex">
+            <el-radio :label="10">男</el-radio>
+            <el-radio :label="20">女</el-radio>
+          </el-radio-group>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+      <el-button @click="onSubmit">提交</el-button>
+    </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -49,7 +84,9 @@ export default {
       searchContent: "",
       isFirm:false,
       username:"",
-      isAdmin:false
+      isAdmin:false,
+      dialogVisible:false,
+      userForm:{}
     };
   },
   created(){
@@ -68,38 +105,57 @@ export default {
     console.log(sessionStorage.getItem("id"));
     if(sessionStorage.getItem("role")=="企业"){
       this.isFirm = true;
+      this.getUserInfo();
+    }
+  },
+  methods:{
+    onSubmit(){
+      let mobeilReg = /^1([38]\d|5[0-35-9]|7[3678])\d{8}$/;
+      if (!mobeilReg.test(this.userForm.mobile)) {
+        this.$message.error("电话号码填写错误");
+        return;
+      }
       this.$apollo.mutate({
         mutation:gql`
-          query(
-            $id:Int
+          mutation(
+            $id:Int!
+            $password:String
+            $name:String
+            $mobile:String
+            $sex:Int
+            $arg:Int
           ){
             member{
-              detail(
+              update(
                 id:$id
+                password:$password
+                name:$name
+                mobile:$mobile
+                sex:$sex
+                arg:$arg
               ){
-                username
-                company{
-                  id
-                }
+                id
               }
             }
           }
         `,
-        variables:{
-          id:sessionStorage.getItem("id")
-        }
-      }).then(
-        data=>{
-          console.log(data)
-        }
-      ).catch(err=>{
+        variables:this.userForm
+      }).then(data=>{
+        console.log(data)
+        this.$message({
+          message:"您的信息修改成功",
+          type:"success"
+        })
+        this.dialogVisible=false
+      }).catch(err=>{
         console.log(err)
       })
-    }
-  },
-  methods:{
+    },
     search(){
       this.$router.push({path:"/index",query:{search:this.searchContent}})
+    },
+    searchResume(){
+      this.$router.push({path:"/index",query:{searchResume:this.searchContent}})
     },
     getRuesume(){
       this.$apollo.mutate({
@@ -151,9 +207,42 @@ export default {
             this.$router.push({path:'/comInfo'})
           }else if(command == 'jobPost'){
             this.$router.push({path:'/jobPost'})
-          }else{
+          }else if(command == 'resResume'){
             this.$router.push({path:'/resResume'})
+          }else{
+            // this.$router.push({path:'/resResume'})
+            this.dialogVisible = true;
+            // this.getUserInfo();
           }
+    },
+    getUserInfo(){
+      this.$apollo.mutate({
+        mutation:gql`
+          query($id:Int){
+            member{
+              detail(
+                id:$id
+              ){
+                id
+                username
+                password
+                name
+                mobile
+                sex
+                arg
+              }
+            }
+          }
+        `,
+        variables:{
+          id:sessionStorage.getItem("id")
+        }
+      }).then(data=>{
+        console.log(data.data.member.detail)
+        this.userForm=data.data.member.detail;
+      }).catch(err=>{
+        console.log(err)
+      })
     }
   }
 };
