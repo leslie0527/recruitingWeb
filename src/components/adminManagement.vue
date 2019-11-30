@@ -7,12 +7,13 @@
       <el-table-column prop="password" label="管理员密码" width="180"></el-table-column>
       <el-table-column prop="role" label="权限" width="180"></el-table-column>
       <el-table-column prop="isDelete" label="是否删除" width="180">
-        <template slot-scope="scope">{{scope.isDelete?"是":"否"}}</template>
+        <template slot-scope="scope">{{scope.row.isDelete?"是":"否"}}</template>
       </el-table-column>
-      <el-table-column fixed="right" label="操作" width="100">
+      <el-table-column fixed="right" label="操作" width="200">
         <template slot-scope="scope">
           <el-button type="text" @click="updateBtn(scope)" size="small">编辑</el-button>
-          <el-button v-if="scope.row.username !== 'admin'" type="text" @click="deleteBtn(scope)" size="small">删除</el-button>
+          <el-button v-if="scope.row.username !== 'admin' && !scope.row.isDelete" type="text" @click="deleteBtn(scope)" size="small">删除</el-button>
+          <el-button v-if="scope.row.username !== 'admin' && scope.row.isDelete" type="text" @click="deleteBtn(scope)" size="small">恢复</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -96,7 +97,7 @@ export default {
       this.dialogTitle = "修改普通管理员";
       this.dialogFormVisible = !this.dialogFormVisible;
     },
-    //删除管理员
+    //删除 恢复管理员
     deleteBtn(scope){
       if (scope.row.username === 'admin') {
         return;
@@ -104,20 +105,20 @@ export default {
       this.$apollo
               .mutate({
                 mutation: gql`
-            mutation($id: Int!) {
+            mutation($id: Int!,$isDelete:Boolean) {
               admin {
-                update(id: $id,isDelete:true) {
+                update(id: $id,isDelete:$isDelete) {
                   isDelete
                 }
               }
             }
           `,
                 variables: {
-                  id: scope.row.id
+                  id: scope.row.id,
+                    isDelete:scope.row.isDelete ? false:true,
                 }
               })
               .then(data => {
-                console.log(data.data.admin.update);
                 this.getAdminList();
               })
               .catch(err => {});
@@ -159,13 +160,11 @@ export default {
             }
           })
           .then(data => {
-            console.log(data);
             this.$message({
               message: "账号修改成功",
-              type: success
+              type: 'success'
             });
             this.dialogFormVisible = !this.dialogFormVisible;
-            // this.adminList.push(data.data.admin.create)
           })
           .catch(err => {
             console.log(err);
@@ -197,12 +196,15 @@ export default {
             }
           })
           .then(data => {
-            console.log(data);
+              this.$message({
+                  message: "账号添加成功",
+                  type: 'success'
+              });
             this.dialogFormVisible = !this.dialogFormVisible;
             this.adminList.push(data.data.admin.create);
           })
           .catch(err => {
-            console.log(err);
+              this.$message.error("该管理员已经添加");
           });
       }
     }
