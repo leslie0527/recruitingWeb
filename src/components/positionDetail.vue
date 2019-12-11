@@ -87,12 +87,14 @@ export default {
   },
   methods: {
     getUrl(){
-          this.cId = this.$route.query.cId;
       if(this.$route.query.id){
+        this.cId = this.$route.query.cId;
         this.id = this.$route.query.id;
         this.activeName = "last";
         this.postShow = true;
         this.getPostDetail();
+      }else{
+        this.cId = sessionStorage.getItem("cId")
       }
       this.getDetail();
     },

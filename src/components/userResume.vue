@@ -12,6 +12,9 @@
                 prop="school"
                 label="学校"
                 width="180">
+                <template slot-scope="scope">
+                    {{scope.row.school?scope.row.school:"暂无数据"}}
+                </template>
             </el-table-column>
             <el-table-column
                 prop="arg"

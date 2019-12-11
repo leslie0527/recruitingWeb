@@ -60,7 +60,7 @@
       </el-form-item>-->
     </el-form>
     <div slot="footer" class="dialog-footer">
-      <el-button @click="detele">格式化</el-button>
+      <!-- <el-button @click="detele">格式化</el-button> -->
       <el-button type="primary" @click="onSubmit">提交</el-button>
     </div>
   </div>
@@ -322,19 +322,19 @@ export default {
       })
       }
     },
-    detele() {
-      this.form = {
-        imageUrl: "", //公司头像
-        name: "", //公司名称
-        industry: "", //行业
-        nature: "", //公司性质
-        scale: "", //公司规模
-        time: "", //成立日期
-        capital: "", //注册资本
-        legal: "", //法人
-        profile: "" //公司简介
-      };
-    },
+    // detele() {
+    //   this.comp = {
+    //     imageUrl: "", //公司头像
+    //     name: "", //公司名称
+    //     industry: "", //行业
+    //     nature: "", //公司性质
+    //     scale: "", //公司规模
+    //     time: "", //成立日期
+    //     capital: "", //注册资本
+    //     legal: "", //法人
+    //     profile: "" //公司简介
+    //   };
+    // },
     handleAvatarSuccess(res, file) {
       this.cutImageBase64(file.raw, 400, 0);
     },

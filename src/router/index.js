@@ -15,6 +15,7 @@ import userResume from '@/components/userResume'
 import roleManagement from '@/components/roleManagement'
 import resResume from '@/components/resResume'
 import dataManagement from '@/components/dataManagement'
+import entLogin from '@/components/entLogin'
 
 Vue.use(Router)
 // console.log(sessionStorage.getItem("id"))
@@ -24,6 +25,11 @@ export default new Router({
       path: '/',
       name: 'login',
       component: login
+    },
+    {
+      path:'/entLogin',
+      name:'entLogin',
+      component:entLogin
     },
     {
       path:'/adminLogin',

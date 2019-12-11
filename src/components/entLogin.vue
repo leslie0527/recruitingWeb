@@ -22,14 +22,14 @@
             v-show="!isLogin"
             placeholder="请重复密码"
           ></el-input>
-          <el-button type="danger" v-if="isLogin" @click="login">登陆</el-button>
-          <el-button type="danger" v-else @click="register">注册</el-button>
+          <el-button class="btn" v-if="isLogin" @click="login">登陆</el-button>
+          <el-button class="btn" v-else @click="register">注册</el-button>
         </div>
         <div class="to-reg">
           <p style="font-size:14px;color:#666">还没有账号？</p>
           <p class="el-icon-d-arrow-right" style="color:#0ba6c2" @click="toReg">{{toRegText}}</p>
-          <router-link to="/entLogin">
-            <p>企业登陆入口</p>
+          <router-link to="/">
+              <p>求职者登陆入口</p>
           </router-link>
         </div>
       </div>
@@ -51,7 +51,7 @@ export default {
       userpwdReg: /^(?![0-9]+$)(?![a-z]+$)(?![A-Z]+$)(?!([^(0-9a-zA-Z)])+$).{6,20}$/,
       isLogin: true,
       toRegText: "立即注册",
-      title: "求职者登陆"
+      title: "企业登陆"
     };
   },
   methods: {
@@ -60,10 +60,10 @@ export default {
       this.isLogin = !this.isLogin;
       if (this.isLogin) {
         this.toRegText = "立即注册";
-        this.title = "求职者登陆";
+        this.title = "企业登陆";
       } else {
         this.toRegText = "立即登陆";
-        this.title = "求职者注册";
+        this.title = "企业注册";
       }
       this.username = "";
       this.userpwd = "";
@@ -190,13 +190,17 @@ export default {
 .body {
   width: 100%;
   height: 500px;
-  background: #f4ebe0;
-  background: url("../assets/bgimg.jpg") no-repeat;
+  background: #2E363F;
+  /* background: url("../assets/bgimg.jpg") no-repeat; */
   background-size: 100%;
 }
 .body::before {
   display: table;
   content: "";
+}
+.btn{
+    background:#2E363F;
+    color:white
 }
 .form {
   margin-top: 100px;
